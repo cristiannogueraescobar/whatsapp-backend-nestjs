@@ -1,202 +1,138 @@
-# Backend WhatsApp - Nest.js
+WhatsApp Backend - Nest.js
+Professional backend system for receiving and managing WhatsApp messages via webhook.
+📋 Description
+This backend receives messages from WhatsApp bots, stores them in MongoDB, and provides a REST API to query them. It includes WebSocket support for real-time updates.
+🚀 Features
 
-Backend profesional para recibir y gestionar mensajes de WhatsApp a través de webhook.
+✅ Webhook endpoint to receive WhatsApp bot messages
+✅ MongoDB storage (Atlas compatible)
+✅ REST API to query conversations and messages
+✅ WebSocket (Socket.io) for real-time updates
+✅ Modular architecture with Nest.js
+✅ TypeScript for robust development
 
-## 📋 Descripción
+📦 Requirements
 
-Este backend recibe mensajes del bot de WhatsApp, los almacena en MongoDB y proporciona una API REST para consultarlos. Incluye soporte para WebSockets para actualizaciones en tiempo real.
+Node.js: v18 or higher
+npm: v9 or higher
+MongoDB: Local or MongoDB Atlas (recommended)
 
-## 🚀 Características
-
-- ✅ Webhook para recibir mensajes del bot de WhatsApp
-- ✅ Almacenamiento en MongoDB (Atlas compatible)
-- ✅ API REST para consultar conversaciones y mensajes
-- ✅ WebSocket (Socket.io) para actualizaciones en tiempo real
-- ✅ Arquitectura modular con Nest.js
-- ✅ TypeScript para desarrollo robusto
-
-## 📦 Requisitos
-
-- **Node.js**: v18 o superior
-- **npm**: v9 o superior
-- **MongoDB**: Local o MongoDB Atlas (recomendado)
-
-## 🔧 Instalación
-
-### 1. Instalar dependencias
-
-```bash
-npm install
-```
-
-### 2. Configurar MongoDB
-
-Copia el archivo de ejemplo:
-
-```bash
-# Windows
+🔧 Installation
+1. Install dependencies
+bashnpm install
+2. Configure MongoDB
+Copy the example file:
+bash# Windows
 copy .env.example .env
 
 # Mac/Linux
 cp .env.example .env
-```
-
-Edita el archivo `.env` y configura tu conexión a MongoDB:
-
-```env
-MONGODB_URL=mongodb+srv://usuario:password@cluster.mongodb.net/whatsapp_db
+Edit the .env file and configure your MongoDB connection:
+envMONGODB_URL=mongodb+srv://user:password@cluster.mongodb.net/whatsapp_db
 PORT=3000
 NODE_ENV=development
-```
+For MongoDB Atlas:
 
-**Para MongoDB Atlas:**
-1. Ve a https://cloud.mongodb.com/
-2. Crea un cluster gratuito (M0)
-3. Crea un usuario de base de datos
-4. Añade tu IP a la whitelist (o 0.0.0.0/0 para desarrollo)
-5. Obtén tu CONNECTION STRING desde "Connect" → "Drivers"
-6. Pega la URL en `MONGODB_URL` (reemplaza `<password>` con tu contraseña real)
+Go to https://cloud.mongodb.com/
+Create a free cluster (M0)
+Create a database user
+Add your IP to the whitelist (or 0.0.0.0/0 for development)
+Get your CONNECTION STRING from "Connect" → "Drivers"
+Paste the URL in MONGODB_URL (replace <password> with your actual password)
 
-### 3. Ejecutar el servidor
-
-**Modo desarrollo (con hot-reload):**
-```bash
-npm run start:dev
-```
-
-**Modo producción:**
-```bash
-npm run build
+3. Run the server
+Development mode (with hot-reload):
+bashnpm run start:dev
+Production mode:
+bashnpm run build
 npm run start:prod
-```
-
-El servidor estará disponible en: `http://localhost:3000`
-
-## 📡 API Endpoints
-
-### 1. Webhook - Recibir mensajes del bot
-
-```http
-POST /webhook
+The server will be available at: http://localhost:3000
+📡 API Endpoints
+1. Webhook - Receive bot messages
+httpPOST /webhook
 Content-Type: application/json
 
 {
   "phone": "+34612345678",
-  "name": "Juan Pérez",
-  "message": "Hola, necesito ayuda",
+  "name": "John Doe",
+  "message": "Hello, I need help",
   "timestamp": "2024-02-10T10:30:00Z"
 }
-```
-
-**Respuesta:**
-```json
-{
+Response:
+json{
   "status": "success",
-  "message": "Mensaje recibido y procesado",
+  "message": "Message received and processed",
   "id": "65c7f8a9b4c5d6e7f8g9h0i1"
 }
-```
+Notes:
 
-**Notas:**
-- El campo `timestamp` es opcional (si no se envía, usa la fecha actual)
-- El webhook solo acepta método POST
+The timestamp field is optional (uses current date if not provided)
+The webhook only accepts POST method
 
-### 2. Obtener todas las conversaciones
-
-```http
-GET /conversations
-```
-
-**Respuesta:**
-```json
-{
+2. Get all conversations
+httpGET /conversations
+Response:
+json{
   "conversations": [
     {
       "phone": "+34612345678",
-      "name": "Juan Pérez",
-      "lastMessage": "Hola, necesito ayuda",
+      "name": "John Doe",
+      "lastMessage": "Hello, I need help",
       "lastTimestamp": "2024-02-10T10:30:00.000Z",
       "unreadCount": 3
     }
   ]
 }
-```
-
-### 3. Obtener mensajes de una conversación
-
-```http
-GET /messages/:phone?limit=50
-```
-
-**Ejemplo:**
-```http
-GET /messages/+34612345678?limit=100
-```
-
-**Respuesta:**
-```json
-{
+3. Get messages from a conversation
+httpGET /messages/:phone?limit=50
+Example:
+httpGET /messages/+34612345678?limit=100
+Response:
+json{
   "messages": [
     {
       "id": "65c7f8a9b4c5d6e7f8g9h0i1",
       "phone": "+34612345678",
-      "name": "Juan Pérez",
-      "message": "Hola",
+      "name": "John Doe",
+      "message": "Hello",
       "timestamp": "2024-02-10T10:30:00.000Z",
       "isFromBot": false
     }
   ]
 }
-```
-
-### 4. Eliminar una conversación
-
-```http
-DELETE /conversations/:phone
-```
-
-**Ejemplo:**
-```http
-DELETE /conversations/+34612345678
-```
-
-## 🔌 WebSocket
-
-El backend incluye un servidor WebSocket para enviar mensajes en tiempo real al frontend.
-
-**Conexión:**
-```javascript
-import { io } from 'socket.io-client';
+4. Delete a conversation
+httpDELETE /conversations/:phone
+Example:
+httpDELETE /conversations/+34612345678
+🔌 WebSocket
+The backend includes a WebSocket server to send real-time messages to the frontend.
+Connection:
+javascriptimport { io } from 'socket.io-client';
 
 const socket = io('http://localhost:3000');
 
 socket.on('connect', () => {
-  console.log('Conectado al servidor');
+  console.log('Connected to server');
 });
 
 socket.on('message', (data) => {
-  console.log('Nuevo mensaje:', data);
+  console.log('New message:', data);
   // data.type === 'new_message'
-  // data.data contiene: { id, phone, name, message, timestamp, isFromBot }
+  // data.data contains: { id, phone, name, message, timestamp, isFromBot }
 });
-```
+🤖 WhatsApp Bot Integration
+In your WhatsApp bot code (Node.js), add this code to send messages to the backend:
+javascriptconst axios = require('axios');
 
-## 🤖 Integrar con el Bot de WhatsApp
-
-En el código del bot de WhatsApp (Node.js), añade este código para enviar mensajes al backend:
-
-```javascript
-const axios = require('axios');
-
-// URL del backend (ajusta según tu configuración)
+// Backend URL (adjust according to your configuration)
 const BACKEND_URL = 'http://localhost:3000';
 
-// Cuando el bot reciba un mensaje
+// When the bot receives a message
 client.on('message', async (message) => {
   try {
     const contact = await message.getContact();
     
-    // Enviar al backend
+    // Send to backend
     await axios.post(`${BACKEND_URL}/webhook`, {
       phone: message.from,
       name: contact.pushname || contact.name || message.from,
@@ -204,70 +140,49 @@ client.on('message', async (message) => {
       timestamp: new Date().toISOString()
     });
     
-    console.log('✅ Mensaje enviado al backend');
+    console.log('✅ Message sent to backend');
   } catch (error) {
-    console.error('❌ Error enviando al backend:', error.message);
+    console.error('❌ Error sending to backend:', error.message);
   }
 });
-```
-
-## 🧪 Probar el Backend
-
-### Probar el webhook manualmente:
-
-**Con curl:**
-```bash
-curl -X POST http://localhost:3000/webhook \
+🧪 Testing the Backend
+Test the webhook manually:
+With curl:
+bashcurl -X POST http://localhost:3000/webhook \
   -H "Content-Type: application/json" \
-  -d '{"phone":"+34612345678","name":"Test User","message":"Hola desde curl"}'
-```
-
-**Con PowerShell:**
-```powershell
-Invoke-RestMethod -Uri "http://localhost:3000/webhook" -Method POST -Headers @{"Content-Type"="application/json"} -Body '{"phone":"+34612345678","name":"Test","message":"Hola"}'
-```
-
-### Verificar conversaciones:
-
-Abre el navegador en:
-```
+  -d '{"phone":"+34612345678","name":"Test User","message":"Hello from curl"}'
+With PowerShell:
+powershellInvoke-RestMethod -Uri "http://localhost:3000/webhook" -Method POST -Headers @{"Content-Type"="application/json"} -Body '{"phone":"+34612345678","name":"Test","message":"Hello"}'
+Check conversations:
+Open your browser at:
 http://localhost:3000/conversations
-```
-
-## 📁 Estructura del Proyecto
-
-```
+📁 Project Structure
 src/
-├── main.ts                      # Punto de entrada
-├── app.module.ts                # Módulo principal
-├── schemas/                     # Esquemas de MongoDB
+├── main.ts                      # Entry point
+├── app.module.ts                # Main module
+├── schemas/                     # MongoDB schemas
 │   ├── message.schema.ts
 │   └── conversation.schema.ts
 ├── dto/                         # Data Transfer Objects
 │   └── webhook-message.dto.ts
-├── webhook/                     # Módulo webhook
+├── webhook/                     # Webhook module
 │   ├── webhook.module.ts
 │   └── webhook.controller.ts
-├── messages/                    # Módulo mensajes
+├── messages/                    # Messages module
 │   ├── messages.module.ts
 │   ├── messages.controller.ts
 │   └── messages.service.ts
-├── conversations/               # Módulo conversaciones
+├── conversations/               # Conversations module
 │   ├── conversations.module.ts
 │   ├── conversations.controller.ts
 │   └── conversations.service.ts
-└── websocket/                   # Módulo WebSocket
+└── websocket/                   # WebSocket module
     ├── websocket.module.ts
     └── websocket.gateway.ts
-```
-
-## 🗄️ Base de Datos
-
-MongoDB crea automáticamente:
-
-### Colección: messages
-```typescript
-{
+🗄️ Database
+MongoDB automatically creates:
+Collection: messages
+typescript{
   _id: ObjectId,
   phone: string,
   name: string,
@@ -277,11 +192,8 @@ MongoDB crea automáticamente:
   createdAt: Date,
   updatedAt: Date
 }
-```
-
-### Colección: conversations
-```typescript
-{
+Collection: conversations
+typescript{
   _id: ObjectId,
   phone: string,
   name: string,
@@ -291,109 +203,74 @@ MongoDB crea automáticamente:
   createdAt: Date,
   updatedAt: Date
 }
-```
-
-## 🚀 Despliegue
-
-### Variables de entorno en producción:
-
-```env
-MONGODB_URL=mongodb+srv://usuario:password@cluster.mongodb.net/whatsapp_db
+🚀 Deployment
+Environment variables in production:
+envMONGODB_URL=mongodb+srv://user:password@cluster.mongodb.net/whatsapp_db
 PORT=3000
 NODE_ENV=production
-```
-
-### Build para producción:
-
-```bash
-npm run build
-```
-
-Los archivos compilados estarán en `dist/`
-
-### Ejecutar en producción:
-
-```bash
-npm run start:prod
-```
-
-### Con PM2 (recomendado):
-
-```bash
-npm install -g pm2
+Build for production:
+bashnpm run build
+Compiled files will be in dist/
+Run in production:
+bashnpm run start:prod
+With PM2 (recommended):
+bashnpm install -g pm2
 pm2 start dist/main.js --name whatsapp-backend
 pm2 save
 pm2 startup
-```
+🛠️ Available Scripts
+bashnpm run start        # Run in normal mode
+npm run start:dev    # Run with hot-reload
+npm run start:prod   # Run in production
+npm run build        # Compile TypeScript to JavaScript
+npm run test         # Run tests
+npm run lint         # Check code with ESLint
+❓ Troubleshooting
+Error: Cannot connect to MongoDB
 
-## 🛠️ Scripts Disponibles
+Verify that MongoDB is running (if local)
+Check the URL in the .env file
+Make sure your IP is allowed in MongoDB Atlas (Network Access)
+Verify that the password in the CONNECTION STRING is correct
 
-```bash
-npm run start        # Ejecutar en modo normal
-npm run start:dev    # Ejecutar con hot-reload
-npm run start:prod   # Ejecutar en producción
-npm run build        # Compilar TypeScript a JavaScript
-npm run test         # Ejecutar tests
-npm run lint         # Verificar código con ESLint
-```
+Error: Port 3000 already in use
+Change the port in .env:
+envPORT=3001
+WebSocket doesn't connect from frontend
 
-## ❓ Troubleshooting
+Verify that CORS is enabled
+Make sure you're using the correct server URL
+In production, use WSS (WebSocket Secure) with SSL certificate
 
-### Error: Cannot connect to MongoDB
+Bot doesn't send messages
 
-- Verifica que MongoDB esté corriendo (si es local)
-- Revisa la URL en el archivo `.env`
-- Asegúrate de que la IP esté permitida en MongoDB Atlas (Network Access)
-- Verifica que la contraseña en la CONNECTION STRING sea correcta
+Verify that the webhook URL is accessible from where the bot runs
+In local development, use ngrok to expose localhost
+Make sure the bot is making POST requests, not GET
 
-### Error: Port 3000 already in use
+🔐 Security
+For production, consider:
 
-Cambia el puerto en `.env`:
-```env
-PORT=3001
-```
+✅ Add JWT authentication
+✅ Validate webhook with API key or signature
+✅ Rate limiting
+✅ Configure CORS properly
+✅ Use environment variables for secrets
+✅ HTTPS/WSS instead of HTTP/WS
 
-### WebSocket no conecta desde el frontend
+📚 Technologies Used
 
-- Verifica que CORS esté habilitado
-- Asegúrate de usar la URL correcta del servidor
-- En producción, usa WSS (WebSocket Secure) con certificado SSL
+Nest.js - Backend framework
+Mongoose - MongoDB ODM
+Socket.io - WebSockets
+MongoDB Atlas - Cloud database
+TypeScript - Typed language
 
-### El bot no envía mensajes
+📝 Notes
 
-- Verifica que la URL del webhook sea accesible desde donde corre el bot
-- En desarrollo local, usa ngrok para exponer el localhost
-- Asegúrate de que el bot esté haciendo POST, no GET
+The backend has NO authentication by default - add it in production
+The node_modules folder is not included - install with npm install
+The .env file is not included - create it from .env.example
 
-## 🔐 Seguridad
-
-Para producción, considera:
-
-- ✅ Añadir autenticación JWT
-- ✅ Validar webhook con API key o firma
-- ✅ Rate limiting
-- ✅ Configurar CORS correctamente
-- ✅ Usar variables de entorno para secretos
-- ✅ HTTPS/WSS en lugar de HTTP/WS
-
-## 📚 Tecnologías Utilizadas
-
-- [Nest.js](https://docs.nestjs.com/) - Framework backend
-- [Mongoose](https://mongoosejs.com/) - ODM para MongoDB
-- [Socket.io](https://socket.io/docs/v4/) - WebSockets
-- [MongoDB Atlas](https://www.mongodb.com/docs/atlas/) - Base de datos en la nube
-- [TypeScript](https://www.typescriptlang.org/) - Lenguaje tipado
-
-## 📝 Notas
-
-- El backend NO tiene autenticación por defecto - añádela en producción
-- La carpeta `node_modules` no está incluida - se instala con `npm install`
-- El archivo `.env` no está incluido - créalo desde `.env.example`
-
-## 💬 Soporte
-
-Para preguntas o problemas, contactar al desarrollador.
-
-## 📄 Licencia
-
+📄 License
 MIT
